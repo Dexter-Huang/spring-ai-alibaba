@@ -21,14 +21,14 @@ export interface IScriptCodeMirrorProps {
   onChange: (value: string) => void;
   inputParams: INodeDataInputParamItem[];
   outputParams: INodeDataOutputParamItem[];
-  language: 'javascript' | 'python';
+  language: 'javascript' | 'python' | 'java';
   theme?: 'light' | 'dark';
   disabled?: boolean;
 }
 
 const generateTypeDefinitions = (
   inputParams: INodeDataInputParamItem[],
-  language: 'javascript' | 'python',
+  language: 'javascript' | 'python' | 'java',
 ) => {
   if (language === 'javascript') {
     // generate input parameter type
@@ -46,7 +46,7 @@ function process(params: InputParams): void {
   // Write your code here
   return output;
 }`;
-  } else {
+  } else if (language === 'python') {
     const inputTypeDef = inputParams
       .map((param) => `${param.key}: ${param.type}`)
       .join('\n  ');
@@ -60,6 +60,18 @@ def process(params: InputParams):
     
     # Write your code here
     return output`;
+  } else {
+    const inputTypeDef = inputParams
+      .map((param) => `${param.key}: ${param.type}`)
+      .join('\n  ');
+    return `import java.util.Map;
+
+public class Script {
+    public static void main(Map<String, Object> params) {
+        // Write your code here
+    }
+}
+`;
   }
 };
 

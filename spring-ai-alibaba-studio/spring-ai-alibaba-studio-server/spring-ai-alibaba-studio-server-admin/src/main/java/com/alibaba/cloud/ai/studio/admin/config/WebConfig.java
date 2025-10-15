@@ -48,8 +48,8 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addMapping("/**")
 			.allowedOriginPatterns("*")
 			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-			.allowedHeaders("X-AGENTSCOPE-WORKSPACE", "Authorization", "Content-Type", "X-Requested-With", "Accept",
-					"Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
+//			.allowedHeaders("X-AGENTSCOPE-WORKSPACE", "Authorization", "Content-Type", "X-Requested-With", "Accept",
+//					"Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
 			.allowCredentials(true)
 			.maxAge(3600);
 	}

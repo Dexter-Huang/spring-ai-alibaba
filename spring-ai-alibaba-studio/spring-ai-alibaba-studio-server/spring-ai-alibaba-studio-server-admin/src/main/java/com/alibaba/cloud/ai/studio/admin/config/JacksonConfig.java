@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 
 /**
@@ -37,10 +38,11 @@ public class JacksonConfig {
 	 * properties during deserialization
 	 */
 	@Bean
+    @Primary
 	public ObjectMapper objectMapper() {
 		return Jackson2ObjectMapperBuilder.json()
 			.serializationInclusion(JsonInclude.Include.NON_NULL)
-			.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+//			.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
 			.featuresToDisable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 			.featuresToEnable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 

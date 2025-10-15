@@ -13,6 +13,7 @@ import './index.less';
 export const SCRIPT_TYPE_OPTIONS = [
   { label: 'Python', value: 'python' },
   { label: 'JavaScript', value: 'javascript' },
+  { label: 'Java', value: 'java' },
 ];
 
 export const CODE_DEMO_MAP = {
@@ -27,10 +28,19 @@ export const CODE_DEMO_MAP = {
   };
   return ret;
 }`,
+  java: `import java.util.HashMap;
+import java.util.Map;
+public class Script {
+    public static Map<String, Object> main(Map<String, Object> params) {
+        Map<String, Object> ret = new HashMap<>();
+        ret.put("output", params.get("input1") + params.get("input2"));
+        return ret;
+    }
+}`,
 };
 
 export interface IScriptEditModalProps {
-  language: 'python' | 'javascript';
+  language: 'python' | 'javascript' | 'java';
   value: string;
   inputParams: INodeDataInputParamItem[];
   outputParams: INodeDataOutputParamItem[];
@@ -54,7 +64,7 @@ export default function ScriptEditModal(props: IScriptEditModalProps) {
     value: props.value,
   });
 
-  const handleChangeLanguage = (val: 'python' | 'javascript') => {
+  const handleChangeLanguage = (val: 'python' | 'javascript' | 'java') => {
     setState({ language: val, value: codeDemoMap[val] });
   };
 

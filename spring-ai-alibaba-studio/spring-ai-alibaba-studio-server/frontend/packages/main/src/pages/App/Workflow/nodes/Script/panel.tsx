@@ -29,6 +29,7 @@ import styles from './index.module.less';
 export const SCRIPT_TYPE_OPTIONS = [
   { label: 'Python', value: 'python' },
   { label: 'JavaScript', value: 'javascript' },
+  { label: 'Java', value: 'java' },
 ];
 
 export const mergeTryCatchDefaultValue = (

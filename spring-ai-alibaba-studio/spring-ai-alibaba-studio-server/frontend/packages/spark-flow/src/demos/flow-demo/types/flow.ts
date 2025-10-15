@@ -184,7 +184,7 @@ export interface IScriptNodeParam {
   /* Script content */
   script_content: string;
   /* Script type, javascript: javascript, python: python */
-  script_type: 'javascript' | 'python';
+  script_type: 'javascript' | 'python' | 'java';
   /* Retry configuration */
   retry_config: IRetryConfig;
   /* Exception handling configuration */

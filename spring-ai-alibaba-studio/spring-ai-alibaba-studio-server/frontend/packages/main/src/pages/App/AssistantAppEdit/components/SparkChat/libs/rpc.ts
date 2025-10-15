@@ -42,7 +42,8 @@ export class Rpc {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
+          // Authorization: `Bearer ${token}`,
+          'X-SAA-TOKEN': `Bearer ${token}`,
         },
         body: JSON.stringify(data),
         credentials: 'include',
