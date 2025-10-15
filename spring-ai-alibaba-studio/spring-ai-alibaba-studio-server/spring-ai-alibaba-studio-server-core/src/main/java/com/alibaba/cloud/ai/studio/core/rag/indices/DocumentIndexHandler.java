@@ -71,8 +71,8 @@ public class DocumentIndexHandler implements MqConsumerHandler<MqMessage> {
 	 */
 	@PostConstruct
 	public void init() {
-		mqConsumerManager.subscribe(mqConfigProperties.getDocumentIndexGroup(),
-				mqConfigProperties.getDocumentIndexTopic(), this);
+//		mqConsumerManager.subscribe(mqConfigProperties.getDocumentIndexGroup(),
+//				mqConfigProperties.getDocumentIndexTopic(), this);
 	}
 
 	/**

@@ -41,12 +41,12 @@ public class MqConfig {
 	 * @param mqConfigProperties Configuration properties for MQ
 	 * @return Configured client configuration
 	 */
-	@Bean
-	public ClientConfiguration clientConfiguration(MqConfigProperties mqConfigProperties) {
-		ClientConfigurationBuilder builder = ClientConfiguration.newBuilder()
-			.setEndpoints(mqConfigProperties.getEndpoints());
-		return builder.build();
-	}
+//	@Bean
+//	public ClientConfiguration clientConfiguration(MqConfigProperties mqConfigProperties) {
+//		ClientConfigurationBuilder builder = ClientConfiguration.newBuilder()
+//			.setEndpoints(mqConfigProperties.getEndpoints());
+//		return builder.build();
+//	}
 
 	/**
 	 * Creates a RocketMQ producer bean for document indexing.
@@ -55,15 +55,15 @@ public class MqConfig {
 	 * @return Configured document index producer
 	 * @throws ClientException if producer creation fails
 	 */
-	@Bean
-	public Producer documentIndexProducer(ClientConfiguration clientConfiguration,
-			MqConfigProperties mqConfigProperties) throws ClientException {
-		ClientServiceProvider provider = ClientServiceProvider.loadService();
-		return provider.newProducerBuilder()
-			.setTopics(mqConfigProperties.getDocumentIndexTopic())
-			.setMaxAttempts(mqConfigProperties.getMaxAttempts())
-			.setClientConfiguration(clientConfiguration)
-			.build();
-	}
+//	@Bean
+//	public Producer documentIndexProducer(ClientConfiguration clientConfiguration,
+//			MqConfigProperties mqConfigProperties) throws ClientException {
+//		ClientServiceProvider provider = ClientServiceProvider.loadService();
+//		return provider.newProducerBuilder()
+//			.setTopics(mqConfigProperties.getDocumentIndexTopic())
+//			.setMaxAttempts(mqConfigProperties.getMaxAttempts())
+//			.setClientConfiguration(clientConfiguration)
+//			.build();
+//	}
 
 }

@@ -97,19 +97,20 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, DocumentEnt
 	private final IndexPipeline knowledgeBaseIndexPipeline;
 
 	/** Producer for document indexing messages */
-	@Qualifier("documentIndexProducer")
-	private final Producer documentIndexProducer;
+//	@Qualifier("documentIndexProducer")
+//	private final Producer documentIndexProducer;
 
 	public DocumentServiceImpl(MqProducerManager mqProducerManager, MqConfigProperties mqConfigProperties,
 			KnowledgeBaseService knowledgeBaseService, VectorStoreFactory vectorStoreFactory,
-			IndexPipeline knowledgeBaseIndexPipeline,
-			@Qualifier("documentIndexProducer") Producer documentIndexProducer) {
+			IndexPipeline knowledgeBaseIndexPipeline
+//			@Qualifier("documentIndexProducer") Producer documentIndexProducer
+	) {
 		this.mqProducerManager = mqProducerManager;
 		this.mqConfigProperties = mqConfigProperties;
 		this.knowledgeBaseService = knowledgeBaseService;
 		this.vectorStoreFactory = vectorStoreFactory;
 		this.knowledgeBaseIndexPipeline = knowledgeBaseIndexPipeline;
-		this.documentIndexProducer = documentIndexProducer;
+//		this.documentIndexProducer = documentIndexProducer;
 	}
 
 	/**
@@ -174,9 +175,9 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, DocumentEnt
 				.build());
 		}
 
-		mqProducerManager.sendAsync(documentIndexProducer, messages,
-				sendResult -> LogUtils.info("send document mq message, messageId: {}", sendResult.getMessageId()),
-				e -> LogUtils.error("Failed to send document mq message", e));
+//		mqProducerManager.sendAsync(documentIndexProducer, messages,
+//				sendResult -> LogUtils.info("send document mq message, messageId: {}", sendResult.getMessageId()),
+//				e -> LogUtils.error("Failed to send document mq message", e));
 
 		return docIds;
 	}
@@ -503,9 +504,9 @@ public class DocumentServiceImpl extends ServiceImpl<DocumentMapper, DocumentEnt
 			.body(JsonUtils.toJson(document))
 			.build());
 
-		mqProducerManager.sendAsync(documentIndexProducer, messages,
-				sendResult -> LogUtils.info("send document mq message, messageId: {}", sendResult.getMessageId()),
-				e -> LogUtils.error("Failed to send document mq message", e));
+//		mqProducerManager.sendAsync(documentIndexProducer, messages,
+//				sendResult -> LogUtils.info("send document mq message, messageId: {}", sendResult.getMessageId()),
+//				e -> LogUtils.error("Failed to send document mq message", e));
 	}
 
 	/**

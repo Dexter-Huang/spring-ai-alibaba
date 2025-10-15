@@ -67,10 +67,17 @@ export default function EditDrawer(props: IProps) {
   const handleSave = () => {
     form.validateFields().then((formValues: any) => {
       const { input } = state;
-      let params = [...input.system_params];
-      input.user_params.forEach((item) => {
-        params = [...params, ...item.params];
-      });
+      // let params = [...input.system_params];
+      // input.user_params.forEach((item) => {
+      //   params = [...params, ...item.params];
+      // });
+      let params = [...(input.system_params || [])];
+      // 添加对 user_params 的检查，如果为 undefined 则使用空数组
+      if (input.user_params && Array.isArray(input.user_params)) {
+        input.user_params.forEach((item) => {
+          params = [...params, ...(item.params ?? [])];
+        });
+      }
       if (params.some((item) => !item.alias && item.display)) {
         message.warning(
           $i18n.get({

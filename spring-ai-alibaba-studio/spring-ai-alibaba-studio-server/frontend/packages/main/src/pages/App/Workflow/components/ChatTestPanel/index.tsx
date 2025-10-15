@@ -251,7 +251,7 @@ export default memo(function ChatTestPanel() {
       )
         return;
       const endNode = res.node_results[res.node_results.length - 1];
-      if (endNode.node_id !== cacheAnimateNodeId.current) {
+      if (endNode && endNode.node_id !== cacheAnimateNodeId.current) {
         focusElement({ nodeId: endNode.node_id });
         cacheAnimateNodeId.current = endNode.node_id;
       }

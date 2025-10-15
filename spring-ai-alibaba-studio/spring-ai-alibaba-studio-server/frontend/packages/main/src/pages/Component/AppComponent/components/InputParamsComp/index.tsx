@@ -125,7 +125,7 @@ export function InputCompItem(props: IInputCompItemProps) {
               })}
             </span>
           </Flex>
-          {props.params.map((item, index) => (
+          {props.params && props.params.map((item, index) => (
             <Flex
               key={`${item.field}_${index}`}
               className={styles['form-row-item']}
@@ -274,7 +274,7 @@ export default function InputParamsComp(props: IProps) {
 
   return (
     <Flex vertical gap={20}>
-      {props.input.user_params.map((item) => (
+      {props.input.user_params && props.input.user_params.map((item) => (
         <InputCompItem
           onChange={(val) => handleChangeUserParams(val, item.code)}
           name={item.name}

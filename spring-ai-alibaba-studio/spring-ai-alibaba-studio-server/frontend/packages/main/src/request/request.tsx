@@ -34,8 +34,9 @@ export const instance = axios.create({
  */
 async function getBaseHeader() {
   const header: {
-    Authorization?: string;
+    // Authorization?: string;
     'Accept-Language'?: string;
+    'X-SAA-TOKEN'?: string;
   } = {
     'Accept-Language': $i18n.getCurrentLanguage(),
   };
@@ -44,7 +45,8 @@ async function getBaseHeader() {
   const token = await session.asyncGet();
 
   if (token) {
-    header.Authorization = 'Bearer ' + token;
+    // header.Authorization = 'Bearer ' + token;
+    header['X-SAA-TOKEN'] = 'Bearer ' + token;
   }
   return header;
 }
