@@ -16,7 +16,7 @@
 
 package com.alibaba.cloud.ai.studio.runtime.domain.plugin;
 
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,7 +44,7 @@ public class ToolExecutionResult implements Serializable {
 	/**
 	 * Error information if the tool execution failed
 	 */
-	private Error error;
+	private BizError error;
 
 	/**
 	 * Output result from the tool execution

@@ -29,7 +29,7 @@ import com.alibaba.cloud.ai.studio.runtime.domain.workflow.debug.WorkflowRequest
 import com.alibaba.cloud.ai.studio.runtime.domain.workflow.debug.WorkflowResponse;
 import com.alibaba.cloud.ai.studio.runtime.exception.BizException;
 import com.alibaba.cloud.ai.studio.runtime.enums.ErrorCode;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.RequestContext;
 import com.alibaba.cloud.ai.studio.runtime.domain.app.Application;
 import com.alibaba.cloud.ai.studio.runtime.domain.chat.ChatMessage;
@@ -203,7 +203,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 
 	private Mono<WorkflowResponse> handleThrowable(WorkflowContext context, Throwable err) {
 		WorkflowResponse response = new WorkflowResponse();
-		Error error;
+		BizError error;
 		if (err instanceof BizException be) {
 			error = be.getError();
 		}
@@ -468,7 +468,7 @@ public class WorkflowServiceImpl implements WorkflowService {
 	}
 
 	private void sendErrorMessage(Sinks.Many<WorkflowResponse> sink, String requestId, String taskId,
-			String conversationId, Error error) {
+			String conversationId, BizError error) {
 		WorkflowResponse response = new WorkflowResponse();
 		response.setRequestId(requestId);
 		response.setTaskId(taskId);

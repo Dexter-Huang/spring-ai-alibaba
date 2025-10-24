@@ -18,7 +18,7 @@ package com.alibaba.cloud.ai.studio.admin.advice;
 
 import com.alibaba.cloud.ai.studio.runtime.exception.BizException;
 import com.alibaba.cloud.ai.studio.runtime.enums.ErrorCode;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.RequestContext;
 import com.alibaba.cloud.ai.studio.runtime.domain.Result;
 import com.alibaba.cloud.ai.studio.runtime.utils.JsonUtils;
@@ -53,7 +53,7 @@ import static com.alibaba.cloud.ai.studio.core.utils.LogUtils.FAIL;
  *
  * @since 1.0.0.3
  */
-@RestControllerAdvice
+@RestControllerAdvice(basePackages = {"com.seaskyland.llm.workflow", "com.alibaba.cloud.ai.studio.admin"})
 public class GlobalExceptionHandler {
 
 	/**
@@ -68,7 +68,7 @@ public class GlobalExceptionHandler {
 	public void exceptionHandler(HttpServletRequest request, HttpServletResponse response, Exception ex)
 			throws Exception {
 		long start = System.currentTimeMillis();
-		Error error;
+		BizError error;
 		if (ex instanceof AsyncRequestTimeoutException) {
 			error = ErrorCode.REQUEST_TIMEOUT.toError();
 		}

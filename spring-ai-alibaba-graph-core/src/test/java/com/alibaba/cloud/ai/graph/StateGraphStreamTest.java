@@ -205,7 +205,7 @@ public class StateGraphStreamTest {
 	 */
 	@BeforeEach
 	public void setUp() {
-		API_KEY = System.getenv(API_KEY_ENV); // 替换为你的API密钥
+		API_KEY = "sk-fe87436622344410af346152a99853b5"; // 替换为你的API密钥
 		Assumptions.assumeTrue(API_KEY != null && !API_KEY.trim().isEmpty(),
 				"Skipping tests because " + API_KEY_ENV + " environment variable is not set");
 		// Create real API client with API key from environment
@@ -445,9 +445,10 @@ public class StateGraphStreamTest {
 			.addEdge("toolNode", END);
 
 		CompiledGraph compile = stateGraph.compile();
+        System.out.println(compile.getGraph(GraphRepresentation.Type.PLANTUML));
 
 		compile
-			.stream(Map.of(OverAllState.DEFAULT_INPUT_KEY, "给我写一个10字的小文章"),
+			.stream(Map.of(OverAllState.DEFAULT_INPUT_KEY, "给我写一个100字的小文章"),
 					RunnableConfig.builder().addParallelNodeExecutor(START, ForkJoinPool.commonPool()).build())
 			.subscribe(output -> {
 				System.out.println("Node output: " + output);

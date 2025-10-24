@@ -17,7 +17,7 @@
 package com.alibaba.cloud.ai.studio.core.utils;
 
 import com.alibaba.cloud.ai.studio.runtime.exception.BizException;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.utils.JsonUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
@@ -68,7 +68,7 @@ public class ErrorHandlerUtils {
 					message = body;
 				}
 
-				Error error = Error.builder()
+				BizError error = BizError.builder()
 					.statusCode(response.getStatusCode().value())
 					.code(code)
 					.message(message)
@@ -95,13 +95,13 @@ public class ErrorHandlerUtils {
 				String body = StreamUtils.copyToString(response.getBody(), StandardCharsets.UTF_8);
 				log.error("failed to call openai model, code: {}, body: {}", response.getStatusCode(), body);
 
-				Error error = parseOpenAiError(response.getStatusCode().value(), body);
+				BizError error = parseOpenAiError(response.getStatusCode().value(), body);
 				throw new BizException(error);
 			}
 		}
 	};
 
-	public static Error parseOpenAiError(int statusCode, String body) {
+	public static BizError parseOpenAiError(int statusCode, String body) {
 		JsonNode node = JsonUtils.fromJson(body);
 
 		String code = "ModelCall";
@@ -119,7 +119,7 @@ public class ErrorHandlerUtils {
 			message = body;
 		}
 
-		return Error.builder().statusCode(statusCode).code(code).message(message).build();
+		return BizError.builder().statusCode(statusCode).code(code).message(message).build();
 	}
 
 }

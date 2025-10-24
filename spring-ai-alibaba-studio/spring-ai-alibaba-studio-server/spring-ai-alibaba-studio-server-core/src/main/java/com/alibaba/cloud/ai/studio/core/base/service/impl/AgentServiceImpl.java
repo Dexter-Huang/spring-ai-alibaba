@@ -19,7 +19,7 @@ package com.alibaba.cloud.ai.studio.core.base.service.impl;
 import com.alibaba.cloud.ai.studio.runtime.exception.BizException;
 import com.alibaba.cloud.ai.studio.runtime.enums.AppType;
 import com.alibaba.cloud.ai.studio.runtime.enums.ErrorCode;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.RequestContext;
 import com.alibaba.cloud.ai.studio.runtime.domain.agent.AgentRequest;
 import com.alibaba.cloud.ai.studio.runtime.domain.agent.AgentResponse;
@@ -230,7 +230,7 @@ public class AgentServiceImpl implements AgentService {
 	private Mono<AgentResponse> handleThrowable(AgentContext context, Throwable err) {
 		AgentResponse response = new AgentResponse();
 
-		Error error;
+		BizError error;
 		if (err instanceof BizException be) {
 			error = be.getError();
 			response.setError(error);

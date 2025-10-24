@@ -105,7 +105,7 @@ public class Result<T> implements Serializable {
 	 * @param error The error details
 	 * @return Result instance
 	 */
-	public static <T> Result<T> error(String requestId, Error error) {
+	public static <T> Result<T> error(String requestId, BizError error) {
 		return Result.<T>builder()
 			.requestId(requestId)
 			.success(false)

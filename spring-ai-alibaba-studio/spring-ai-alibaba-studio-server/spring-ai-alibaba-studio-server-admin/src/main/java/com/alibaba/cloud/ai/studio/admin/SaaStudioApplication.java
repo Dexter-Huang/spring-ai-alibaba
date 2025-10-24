@@ -16,7 +16,6 @@
 
 package com.alibaba.cloud.ai.studio.admin;
 
-import com.alibaba.cloud.ai.studio.admin.generator.GeneratorApplication;
 import com.alibaba.cloud.ai.studio.admin.generator.config.GraphProjectGenerationConfiguration;
 import com.alibaba.cloud.ai.studio.core.config.StudioProperties;
 import org.springframework.boot.SpringApplication;
@@ -41,10 +40,7 @@ import org.springframework.context.annotation.FilterType;
 @ComponentScan(basePackages = { "com.alibaba.cloud.ai.studio" },
 		excludeFilters = {
 				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-						classes = GraphProjectGenerationConfiguration.class),
-				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = GeneratorApplication.class),
-				@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,
-						classes = GeneratorApplication.MockLoginController.class) })
+						classes = GraphProjectGenerationConfiguration.class)})
 @EnableConfigurationProperties(StudioProperties.class)
 public class SaaStudioApplication {
 

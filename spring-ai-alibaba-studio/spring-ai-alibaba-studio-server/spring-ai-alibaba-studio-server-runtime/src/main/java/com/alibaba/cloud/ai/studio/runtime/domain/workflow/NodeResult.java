@@ -15,7 +15,7 @@
  */
 package com.alibaba.cloud.ai.studio.runtime.domain.workflow;
 
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.chat.ChatMessage;
 import com.alibaba.cloud.ai.studio.runtime.domain.chat.Usage;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -66,7 +66,7 @@ public class NodeResult implements Serializable {
 	@JsonProperty("error_info")
 	private String errorInfo;
 
-	private Error error;
+	private BizError error;
 
 	private String input;
 
@@ -97,7 +97,7 @@ public class NodeResult implements Serializable {
 
 	private String ext;
 
-	public static NodeResult error(Node node, Error error) {
+	public static NodeResult error(Node node, BizError error) {
 		NodeResult result = new NodeResult();
 		result.setNodeId(node.getId());
 		result.setNodeName(node.getName() == null ? node.getId() : node.getName());

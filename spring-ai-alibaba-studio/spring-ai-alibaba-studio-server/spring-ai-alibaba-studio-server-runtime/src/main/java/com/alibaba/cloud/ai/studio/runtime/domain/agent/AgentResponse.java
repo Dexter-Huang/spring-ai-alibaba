@@ -16,7 +16,7 @@
 
 package com.alibaba.cloud.ai.studio.runtime.domain.agent;
 
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.chat.ChatMessage;
 import com.alibaba.cloud.ai.studio.runtime.domain.chat.Usage;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -67,7 +67,7 @@ public class AgentResponse implements Serializable {
 	private Usage usage;
 
 	/** Error information if the request failed */
-	private Error error;
+	private BizError error;
 
 	/** Checks if the response was successful */
 	@JsonIgnore

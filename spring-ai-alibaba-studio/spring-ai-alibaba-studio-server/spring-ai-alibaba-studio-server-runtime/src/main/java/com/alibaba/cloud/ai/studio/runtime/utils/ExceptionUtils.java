@@ -18,7 +18,7 @@ package com.alibaba.cloud.ai.studio.runtime.utils;
 
 import com.alibaba.cloud.ai.studio.runtime.exception.BizException;
 import com.alibaba.cloud.ai.studio.runtime.enums.ErrorCode;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 
 /**
  * Utility class for handling exceptions and converting them to standardized error
@@ -34,8 +34,8 @@ public class ExceptionUtils {
 	 * @param err The throwable to convert
 	 * @return Standardized Error object
 	 */
-	public static Error convertError(Throwable err) {
-		Error error;
+	public static BizError convertError(Throwable err) {
+		BizError error;
 		if (err instanceof BizException) {
 			error = ((BizException) err).getError();
 		}

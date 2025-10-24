@@ -16,7 +16,7 @@
 
 package com.alibaba.cloud.ai.studio.runtime.enums;
 
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -332,7 +332,7 @@ public enum ErrorCode {
 		return String.format(this.message, params);
 	}
 
-	public Error toError(String... params) {
+	public BizError toError(String... params) {
 		String message;
 		if (params != null && params.length > 0) {
 			message = getMessage(params);
@@ -341,7 +341,7 @@ public enum ErrorCode {
 			message = this.message;
 		}
 
-		return Error.builder().statusCode(statusCode).code(code).message(message).type(type).build();
+		return BizError.builder().statusCode(statusCode).code(code).message(message).type(type).build();
 	}
 
 }

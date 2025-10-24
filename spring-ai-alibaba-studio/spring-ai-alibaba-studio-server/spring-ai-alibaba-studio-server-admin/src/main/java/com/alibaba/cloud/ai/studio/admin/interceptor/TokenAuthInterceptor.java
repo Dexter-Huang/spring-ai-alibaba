@@ -70,7 +70,8 @@ public class TokenAuthInterceptor implements HandlerInterceptor {
 		}
 
 		String accountId;
-		String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+//        String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+        String authHeader = request.getHeader("X-SAA-TOKEN");
 		if (authHeader == null) {
 			authHeader = request.getParameter(ApiConstants.ACCESS_TOKEN);
 		}

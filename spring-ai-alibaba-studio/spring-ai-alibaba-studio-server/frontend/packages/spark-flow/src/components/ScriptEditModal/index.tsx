@@ -19,7 +19,7 @@ export const SCRIPT_TYPE_OPTIONS = [
 export const CODE_DEMO_MAP = {
   python: `def main():
   ret = {
-      "output": params['input1'] + params['input2'] 
+      "output": params['input1'] + params['input2']
   }
   return ret`,
   javascript: `function main() {
@@ -30,7 +30,7 @@ export const CODE_DEMO_MAP = {
 }`,
   java: `import java.util.HashMap;
 import java.util.Map;
-public class Script {
+public class Main {
     public static Map<String, Object> main(Map<String, Object> params) {
         Map<String, Object> ret = new HashMap<>();
         ret.put("output", params.get("input1") + params.get("input2"));

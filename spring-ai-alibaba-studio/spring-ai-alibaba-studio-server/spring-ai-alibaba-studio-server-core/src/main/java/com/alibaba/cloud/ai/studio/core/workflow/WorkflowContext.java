@@ -39,7 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 
 /**
  * Context for workflow execution and management
@@ -73,7 +73,7 @@ public class WorkflowContext extends RequestContext {
 	private String errorInfo;
 
 	/** Error object containing detailed error information */
-	private Error error;
+	private BizError error;
 
 	/** Map of sub-workflow contexts */
 	private HashMap<String, WorkflowContext> subWorkflowContextMap = new HashMap<>();

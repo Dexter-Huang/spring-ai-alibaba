@@ -18,7 +18,7 @@ package com.alibaba.cloud.ai.studio.core.workflow.processor.impl;
 
 import com.alibaba.cloud.ai.studio.runtime.exception.BizException;
 import com.alibaba.cloud.ai.studio.runtime.enums.ErrorCode;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.file.File;
 import com.alibaba.cloud.ai.studio.runtime.domain.agent.AgentResponse;
 import com.alibaba.cloud.ai.studio.runtime.domain.chat.ChatMessage;
@@ -204,7 +204,7 @@ public class LLMExecuteProcessor extends AbstractExecuteProcessor {
 	private void handleResponse(AgentResponse response, List<Message> requestMessages, Map<String, Object> paramMap,
 			ModelConfig modelConfig, Node node, WorkflowContext context, ModelTmpResponseContent tmpResponseContent) {
 		if (!response.isSuccess()) {
-			Error error = response.getError();
+			BizError error = response.getError();
 			// Node execution error, save execution result and record error information
 			context.getNodeResultMap()
 				.put(node.getId(), NodeResult.error(node, "Workflow execution error: " + error.getMessage()));

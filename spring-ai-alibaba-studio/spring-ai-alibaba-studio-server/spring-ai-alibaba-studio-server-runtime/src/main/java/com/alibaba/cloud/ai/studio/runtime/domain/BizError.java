@@ -34,7 +34,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Error implements Serializable {
+public class BizError implements Serializable {
 
 	/** HTTP status code of the error */
 	@JsonProperty("status_code")

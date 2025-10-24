@@ -20,7 +20,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 
 /**
  * Custom exception class for handling business logic errors in the application.
@@ -33,7 +33,7 @@ import com.alibaba.cloud.ai.studio.runtime.domain.Error;
 public class BizException extends RuntimeException implements Serializable {
 
 	/** Contains error details including message and additional error information */
-	private Error error;
+	private BizError error;
 
 	/** Default constructor */
 	public BizException() {
@@ -41,25 +41,25 @@ public class BizException extends RuntimeException implements Serializable {
 	}
 
 	/** Constructor with error details */
-	public BizException(Error error) {
+	public BizException(BizError error) {
 		super(error.getMessage());
 		this.error = error;
 	}
 
 	/** Constructor with error details and cause */
-	public BizException(Error error, Throwable cause) {
+	public BizException(BizError error, Throwable cause) {
 		super(error.getMessage(), cause);
 		this.error = error;
 	}
 
-	public BizException(Error error, String message) {
+	public BizException(BizError error, String message) {
 		super(message);
 		this.error = error;
 		this.error.setMessage(message);
 	}
 
 	/** Constructor with error details, cause, and stack trace options */
-	public BizException(Error error, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+	public BizException(BizError error, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
 		super(error.getMessage(), cause, enableSuppression, writableStackTrace);
 		this.error = error;
 	}

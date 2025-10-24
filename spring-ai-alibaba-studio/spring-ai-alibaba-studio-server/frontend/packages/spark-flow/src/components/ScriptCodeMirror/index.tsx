@@ -42,7 +42,7 @@ const generateTypeDefinitions = (
 
 function process(params: InputParams): void {
   const input = params;
-  
+
   // Write your code here
   return output;
 }`;
@@ -57,7 +57,7 @@ class InputParams(TypedDict):
 
 def process(params: InputParams):
     input = params
-    
+
     # Write your code here
     return output`;
   } else {
@@ -66,7 +66,7 @@ def process(params: InputParams):
       .join('\n  ');
     return `import java.util.Map;
 
-public class Script {
+public class Main {
     public static void main(Map<String, Object> params) {
         // Write your code here
     }

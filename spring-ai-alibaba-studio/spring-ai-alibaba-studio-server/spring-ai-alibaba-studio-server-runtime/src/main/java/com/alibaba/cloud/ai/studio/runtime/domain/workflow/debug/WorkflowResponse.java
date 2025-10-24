@@ -15,7 +15,7 @@
  */
 package com.alibaba.cloud.ai.studio.runtime.domain.workflow.debug;
 
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.chat.ChatMessage;
 import com.alibaba.cloud.ai.studio.runtime.domain.workflow.WorkflowStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -70,7 +70,7 @@ public class WorkflowResponse implements Serializable {
 
 	private ChatMessage message;
 
-	private Error error;
+	private BizError error;
 
 	@JsonIgnore
 	public boolean isSuccess() {

@@ -21,7 +21,7 @@ import com.alibaba.cloud.ai.studio.runtime.enums.ApiParameterLocation;
 import com.alibaba.cloud.ai.studio.runtime.enums.ParameterType;
 import com.alibaba.cloud.ai.studio.runtime.enums.ErrorCode;
 import com.alibaba.cloud.ai.studio.runtime.domain.tool.ApiParameter;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.plugin.Plugin;
 import com.alibaba.cloud.ai.studio.runtime.domain.plugin.Tool;
 import com.alibaba.cloud.ai.studio.runtime.domain.plugin.ToolExecutionRequest;
@@ -222,7 +222,7 @@ public class ToolExecutionServiceImpl implements ToolExecutionService {
 
 				return ToolExecutionResult.builder()
 					.success(false)
-					.error(Error.builder().statusCode(result.getCode()).message(result.getMessage()).build())
+					.error(BizError.builder().statusCode(result.getCode()).message(result.getMessage()).build())
 					.build();
 
 			}

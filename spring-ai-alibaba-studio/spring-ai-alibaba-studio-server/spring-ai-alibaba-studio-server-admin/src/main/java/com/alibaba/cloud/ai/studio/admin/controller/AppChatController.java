@@ -16,7 +16,7 @@
 
 package com.alibaba.cloud.ai.studio.admin.controller;
 
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.RequestContext;
 import com.alibaba.cloud.ai.studio.runtime.domain.agent.AgentRequest;
 import com.alibaba.cloud.ai.studio.runtime.domain.agent.AgentResponse;
@@ -102,7 +102,7 @@ public class AppChatController {
 			return result;
 		}
 		catch (Exception e) {
-			Error error = ExceptionUtils.convertError(e);
+			BizError error = ExceptionUtils.convertError(e);
 			response.setStatus(error.getStatusCode());
 
 			String result = JsonUtils.toJson(error);
@@ -146,7 +146,7 @@ public class AppChatController {
 		LogUtils.monitor(context, "AgentChatController", "endStreamCallError", context.getStartTime(), FAIL, request,
 				err.getMessage(), err);
 
-		Error error = ExceptionUtils.convertError(err);
+		BizError error = ExceptionUtils.convertError(err);
 		AgentResponse completion = AgentResponse.builder().requestId(context.getRequestId()).error(error).build();
 
 		return Mono.just(completion);

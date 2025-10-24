@@ -23,12 +23,29 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfiguration {
 
-	@Bean
-	public GroupedOpenApi adminApi() {
-		return GroupedOpenApi.builder()
-			.group("spring-ai-alibaba-graph-studio api docs")
-			.pathsToMatch("/graph-studio/**")
-			.build();
-	}
+    @Bean
+    public GroupedOpenApi cbesApi() {
+        return GroupedOpenApi.builder()
+                .group("CBES LLM api docs")
+                .packagesToScan("com.seaskyland.llm.app")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi workFlowAdminApi() {
+        return GroupedOpenApi.builder()
+                .group("WorkFlow Admin API")
+                .packagesToScan("com.seaskyland.llm.workflow.admin.controller")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi adminApi() {
+        return GroupedOpenApi.builder()
+                .group("spring-ai-alibaba-graph-studio api docs")
+                .pathsToMatch("/graph-studio/**")
+                .build();
+    }
 
 }
+

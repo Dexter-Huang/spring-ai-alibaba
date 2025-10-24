@@ -38,49 +38,54 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-	@Override
-	public void addArgumentResolvers(@NotNull List<HandlerMethodArgumentResolver> resolvers) {
-		resolvers.add(new ApiModelAttributeMethodArgumentResolver());
-	}
+    @Override
+    public void addArgumentResolvers(@NotNull List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(new ApiModelAttributeMethodArgumentResolver());
+    }
 
-	@Override
-	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-			.allowedOriginPatterns("*")
-			.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 //			.allowedHeaders("X-AGENTSCOPE-WORKSPACE", "Authorization", "Content-Type", "X-Requested-With", "Accept",
 //					"Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers")
-			.allowCredentials(true)
-			.maxAge(3600);
-	}
+                .allowCredentials(true)
+                .maxAge(3600);
+    }
 
-	/**
-	 * Configures static resource handling and SPA routing. Maps all requests to
-	 * classpath:/static/ directory. Returns index.html for non-existent resources to
-	 * support SPA routing. Excludes /console/v1 and /api/v1 paths from static resource
-	 * handling.
-	 * @param registry Resource handler registry
-	 */
-	@Override
-	public void addResourceHandlers(
-			org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/**")
-			.addResourceLocations("classpath:/static/")
-			.resourceChain(true)
-			.addResolver(new PathResourceResolver() {
-				@Override
-				protected Resource getResource(@NotNull String resourcePath, @NotNull Resource location)
-						throws IOException {
-					// Exclude /console/v1 and /api/v1 prefixed requests
-					if (resourcePath.startsWith("console/v1/") || resourcePath.startsWith("api/v1/")) {
-						return null;
-					}
+    /**
+     * Configures static resource handling and SPA routing. Maps all requests to
+     * classpath:/static/ directory. Returns index.html for non-existent resources to
+     * support SPA routing. Excludes /console/v1 and /api/v1 paths from static resource
+     * handling.
+     * @param registry Resource handler registry
+     */
+    @Override
+    public void addResourceHandlers(
+            org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry registry) {
+        // 映射文档资源
+        registry.addResourceHandler("doc.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("/**")
+                .addResourceLocations("classpath:/workflow/")
+                .resourceChain(false)
+                .addResolver(new PathResourceResolver() {
+                    @Override
+                    protected Resource getResource(@NotNull String resourcePath, @NotNull Resource location)
+                            throws IOException {
+                        // Exclude /console/v1 and /api/v1 prefixed requests
+                        if (resourcePath.startsWith("console/v1/") || resourcePath.startsWith("api/v1/")) {
+                            return null;
+                        }
 
-					Resource requestedResource = location.createRelative(resourcePath);
-					return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
-							: location.createRelative("index.html");
-				}
-			});
-	}
+                        Resource requestedResource = location.createRelative(resourcePath);
+                        return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
+                                : location.createRelative("index.html");
+                    }
+                });
+    }
 
 }

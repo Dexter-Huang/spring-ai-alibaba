@@ -18,7 +18,7 @@ package com.alibaba.cloud.ai.studio.core.workflow.processor.impl;
 
 import com.alibaba.cloud.ai.studio.runtime.exception.BizException;
 import com.alibaba.cloud.ai.studio.runtime.enums.ErrorCode;
-import com.alibaba.cloud.ai.studio.runtime.domain.Error;
+import com.alibaba.cloud.ai.studio.runtime.domain.BizError;
 import com.alibaba.cloud.ai.studio.runtime.domain.plugin.ToolExecutionRequest;
 import com.alibaba.cloud.ai.studio.runtime.domain.plugin.ToolExecutionResult;
 import com.alibaba.cloud.ai.studio.runtime.domain.workflow.Edge;
@@ -87,7 +87,7 @@ public class PluginExecuteProcessor extends AbstractExecuteProcessor {
 		}
 		if (result == null || !result.isSuccess()) {
 			nodeResult.setOutput(null);
-			Error error = result.getError();
+			BizError error = result.getError();
 			nodeResult.setErrorInfo(error == null ? null : error.getMessage());
 			nodeResult.setError(error);
 			nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
