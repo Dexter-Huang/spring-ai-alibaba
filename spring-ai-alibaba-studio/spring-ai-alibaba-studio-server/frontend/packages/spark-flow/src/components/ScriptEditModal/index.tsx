@@ -11,8 +11,6 @@ import ScriptCodeMirror from '../ScriptCodeMirror';
 import './index.less';
 
 export const SCRIPT_TYPE_OPTIONS = [
-  { label: 'Python', value: 'python' },
-  { label: 'JavaScript', value: 'javascript' },
   { label: 'Java', value: 'java' },
 ];
 
@@ -33,14 +31,14 @@ import java.util.Map;
 public class Main {
     public static Map<String, Object> main(Map<String, Object> params) {
         Map<String, Object> ret = new HashMap<>();
-        ret.put("output", params.get("input1") + params.get("input2"));
+        ret.put("output", (Integer)params.get("input1") + (Integer)params.get("input2"));
         return ret;
     }
 }`,
 };
 
 export interface IScriptEditModalProps {
-  language: 'python' | 'javascript' | 'java';
+  language: 'java';
   value: string;
   inputParams: INodeDataInputParamItem[];
   outputParams: INodeDataOutputParamItem[];
@@ -64,7 +62,7 @@ export default function ScriptEditModal(props: IScriptEditModalProps) {
     value: props.value,
   });
 
-  const handleChangeLanguage = (val: 'python' | 'javascript' | 'java') => {
+  const handleChangeLanguage = (val: 'java') => {
     setState({ language: val, value: codeDemoMap[val] });
   };
 

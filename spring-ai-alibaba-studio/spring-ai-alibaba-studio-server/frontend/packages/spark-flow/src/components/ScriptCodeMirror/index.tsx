@@ -21,14 +21,14 @@ export interface IScriptCodeMirrorProps {
   onChange: (value: string) => void;
   inputParams: INodeDataInputParamItem[];
   outputParams: INodeDataOutputParamItem[];
-  language: 'javascript' | 'python' | 'java';
+  language: 'java';
   theme?: 'light' | 'dark';
   disabled?: boolean;
 }
 
 const generateTypeDefinitions = (
   inputParams: INodeDataInputParamItem[],
-  language: 'javascript' | 'python' | 'java',
+  language: 'java',
 ) => {
   if (language === 'javascript') {
     // generate input parameter type
