@@ -42,6 +42,7 @@ import org.jgrapht.graph.DirectedAcyclicGraph;
 import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -64,215 +65,233 @@ import java.util.Map;
 @Component("ScriptExecuteProcessor")
 public class ScriptExecuteProcessor extends AbstractExecuteProcessor {
 
-	private final SandboxManager sandboxManager;
+    private final SandboxManager sandboxManager;
 
-	public ScriptExecuteProcessor(SandboxManager sandboxManager, RedisManager redisManager,
-			WorkflowInnerService workflowInnerService, ChatMemory conversationChatMemory, CommonConfig commonConfig) {
-		super(redisManager, workflowInnerService, conversationChatMemory, commonConfig);
-		this.sandboxManager = sandboxManager;
-	}
+    public ScriptExecuteProcessor(SandboxManager sandboxManager, RedisManager redisManager,
+                                  WorkflowInnerService workflowInnerService, ChatMemory conversationChatMemory, CommonConfig commonConfig) {
+        super(redisManager, workflowInnerService, conversationChatMemory, commonConfig);
+        this.sandboxManager = sandboxManager;
+    }
 
-	@Override
-	public String getNodeType() {
-		return NodeTypeEnum.SCRIPT.getCode();
-	}
+    @Override
+    public String getNodeType() {
+        return NodeTypeEnum.SCRIPT.getCode();
+    }
 
-	@Override
-	public String getNodeDescription() {
-		return NodeTypeEnum.SCRIPT.getDesc();
-	}
+    @Override
+    public String getNodeDescription() {
+        return NodeTypeEnum.SCRIPT.getDesc();
+    }
 
-	/**
-	 * Executes the script node in the workflow
-	 * @param graph The workflow graph
-	 * @param node The script node to execute
-	 * @param context The workflow context
-	 * @return NodeResult containing execution status and output
-	 */
-	@Override
-	public NodeResult innerExecute(DirectedAcyclicGraph<String, Edge> graph, Node node, WorkflowContext context) {
-		NodeResult nodeResult = new NodeResult();
-		nodeResult.setNodeId(node.getId());
-		nodeResult.setNodeName(node.getName());
-		nodeResult.setNodeType(node.getType());
-		nodeResult.setNodeStatus(NodeStatusEnum.SUCCESS.getCode());
+    /**
+     * Executes the script node in the workflow
+     * @param graph The workflow graph
+     * @param node The script node to execute
+     * @param context The workflow context
+     * @return NodeResult containing execution status and output
+     */
+    @Override
+    public NodeResult innerExecute(DirectedAcyclicGraph<String, Edge> graph, Node node, WorkflowContext context) {
+        NodeResult nodeResult = new NodeResult();
+        nodeResult.setNodeId(node.getId());
+        nodeResult.setNodeName(node.getName());
+        nodeResult.setNodeType(node.getType());
+        nodeResult.setNodeStatus(NodeStatusEnum.SUCCESS.getCode());
 
-		NodeParam nodeParam = JsonUtils.fromMap(node.getConfig().getNodeParam(), NodeParam.class);
+        NodeParam nodeParam = JsonUtils.fromMap(node.getConfig().getNodeParam(), NodeParam.class);
 
-		// Get script type and content
-		String scriptType = nodeParam.getScriptType();
-		String scriptContent = nodeParam.getScriptContent();
+        // Get script type and content
+        String scriptType = nodeParam.getScriptType();
+        String scriptContent = nodeParam.getScriptContent();
 
-		// Validate script type
-		if (!ScriptType.python.name().equals(scriptType) && !ScriptType.javascript.name().equals(scriptType)) {
-			nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
-			nodeResult.setErrorCode(ErrorCode.WORKFLOW_CONFIG_INVALID.getCode());
-			nodeResult.setErrorInfo(
-					"Unsupported script type: " + scriptType + ", currently only python3 and javascript are supported");
-			return nodeResult;
-		}
+        // Validate script type
+        if (!Arrays.stream(ScriptType.values()).toList().contains(ScriptType.fromString(scriptType))) {
+            nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
+            nodeResult.setErrorCode(ErrorCode.WORKFLOW_CONFIG_INVALID.getCode());
+            nodeResult.setErrorInfo(
+                    "Unsupported script type: " + scriptType + ", currently only python3 and javascript are supported");
+            return nodeResult;
+        }
 
-		// Build script variable mapping
-		Map<String, Object> localVariableMap = constructScriptVariableMap(node, context);
-		Map<String, Object> variableMap = Maps.newHashMap();
-		variableMap.put("params", localVariableMap);
+        // Build script variable mapping
+        Map<String, Object> localVariableMap = constructScriptVariableMap(node, context);
+        Map<String, Object> variableMap = Maps.newHashMap();
+        variableMap.put("params", localVariableMap);
 
-		// Execute script in sandbox for container isolation
-		Result<String> executeResult;
-		if (ScriptType.python.name().equals(scriptType)) {
-			// Execute Python script using GraalVM Python
-			scriptContent += "\nmain()";
-			executeResult = sandboxManager.executePython3Script(scriptContent, variableMap, context.getRequestId());
-		}
-		else {
-			scriptContent += "\nmain()";
-			// Execute JavaScript script using traditional method
-			executeResult = sandboxManager.executeScript(scriptContent, variableMap, context.getRequestId());
-		}
+        // Execute script in sandbox for container isolation
+        Result<String> executeResult;
+        if (ScriptType.python.name().equals(scriptType)) {
+            // Execute Python script using GraalVM Python
+            scriptContent += "\nmain()";
+            executeResult = sandboxManager.executePython3Script(scriptContent, variableMap, context.getRequestId());
+        }
+        else if (ScriptType.javascript.name().equals(scriptType)){
+            scriptContent += "\nmain()";
+            // Execute JavaScript script using traditional method
+            executeResult = sandboxManager.executeJavaScript(scriptContent, variableMap, context.getRequestId());
+        } else if (ScriptType.java.name().equals(scriptType)) {
+            executeResult = sandboxManager.executeJava(scriptContent, variableMap, context.getRequestId());
+        } else {
+            nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
+            nodeResult.setErrorCode(ErrorCode.WORKFLOW_CONFIG_INVALID.getCode());
+            nodeResult.setErrorInfo(
+                    "Unsupported script type: " + scriptType + ", currently only python3 and javascript are supported");
+            return nodeResult;
+        }
 
-		if (executeResult != null && executeResult.isSuccess()) {
-			ScriptExecutionResponse scriptRes = JsonUtils.fromJson(executeResult.getData(),
-					ScriptExecutionResponse.class);
-			if (scriptRes.getSuccess()) {
-				// Script execution successful
-				Map<String, Object> outputParamsMap;
-				if (scriptRes.getData() instanceof Map) {
-					// Process output parameters
-					outputParamsMap = constructOutputParamsMap(node, scriptRes.getData(), context);
-					nodeResult.setInput(JsonUtils.toJson(decorateInput(localVariableMap)));
-					nodeResult.setOutput(JsonUtils.toJson(outputParamsMap));
-					nodeResult.setUsages(null);
-				}
-				else {
-					// Output format does not meet requirements
-					nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
-					nodeResult.setErrorCode(ErrorCode.WORKFLOW_CONFIG_INVALID.getCode());
-					nodeResult
-						.setErrorInfo("Output format does not match configuration, raw data: " + scriptRes.getData());
-				}
-			}
-			else {
-				// Script execution failed
-				nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
-				nodeResult.setErrorCode(ErrorCode.WORKFLOW_CONFIG_INVALID.getCode());
-				nodeResult.setErrorInfo("Script node execution failed: " + scriptRes.getMessage());
-			}
-		}
-		else {
-			// Sandbox execution failed
-			nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
-			nodeResult.setErrorCode(ErrorCode.WORKFLOW_CONFIG_INVALID.getCode());
-			String errorMsg = executeResult != null && !executeResult.isSuccess() ? executeResult.getMessage()
-					: "Unknown error";
-			nodeResult.setErrorInfo("Script node execution failed in sandbox: " + errorMsg);
-		}
+        if (executeResult != null && executeResult.isSuccess()) {
+            ScriptExecutionResponse scriptRes = JsonUtils.fromJson(executeResult.getData(),
+                    ScriptExecutionResponse.class);
+            if (scriptRes.getSuccess()) {
+                // Script execution successful
+                Map<String, Object> outputParamsMap;
+                if (scriptRes.getData() instanceof Map) {
+                    // Process output parameters
+                    outputParamsMap = constructOutputParamsMap(node, scriptRes.getData(), context);
+                    nodeResult.setInput(JsonUtils.toJson(decorateInput(localVariableMap)));
+                    nodeResult.setOutput(JsonUtils.toJson(outputParamsMap));
+                    nodeResult.setUsages(null);
+                }
+                else {
+                    // Output format does not meet requirements
+                    nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
+                    nodeResult.setErrorCode(ErrorCode.WORKFLOW_CONFIG_INVALID.getCode());
+                    nodeResult
+                            .setErrorInfo("Output format does not match configuration, raw data: " + scriptRes.getData());
+                }
+            }
+            else {
+                // Script execution failed
+                nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
+                nodeResult.setErrorCode(ErrorCode.WORKFLOW_CONFIG_INVALID.getCode());
+                nodeResult.setErrorInfo("Script node execution failed: " + scriptRes.getMessage());
+            }
+        }
+        else {
+            // Sandbox execution failed
+            nodeResult.setNodeStatus(NodeStatusEnum.FAIL.getCode());
+            nodeResult.setErrorCode(ErrorCode.WORKFLOW_CONFIG_INVALID.getCode());
+            String errorMsg = executeResult != null && !executeResult.isSuccess() ? executeResult.getMessage()
+                    : "Unknown error";
+            nodeResult.setErrorInfo("Script node execution failed in sandbox: " + errorMsg);
+        }
 
-		// Set input parameters
-		nodeResult.setInput(JsonUtils.toJson(decorateInput(localVariableMap)));
-		return nodeResult;
-	}
+        // Set input parameters
+        nodeResult.setInput(JsonUtils.toJson(decorateInput(localVariableMap)));
+        return nodeResult;
+    }
 
-	/**
-	 * Constructs a variable map for script execution from the workflow context
-	 * @param node The script node
-	 * @param context The workflow context
-	 * @return Map of variables for script execution
-	 */
-	private Map<String, Object> constructScriptVariableMap(Node node, WorkflowContext context) {
-		Map<String, Object> map = Maps.newHashMap();
-		List<Node.InputParam> inputParams = node.getConfig().getInputParams();
-		if (CollectionUtils.isEmpty(inputParams)) {
-			return map;
-		}
-		inputParams.forEach(scriptParam -> {
-			String valueFrom = scriptParam.getValueFrom();
-			if (valueFrom.equals(ValueFromEnum.refer.name())) {
-				Object value = VariableUtils.getValueFromContext(scriptParam, context);
-				map.put(scriptParam.getKey(), value);
-			}
-			else {
-				Object value = VariableUtils.convertValueByType(scriptParam.getKey(), scriptParam.getType(),
-						scriptParam.getValue());
-				if (value == null) {
-					return;
-				}
-				map.put(scriptParam.getKey(), value);
-			}
-		});
-		return map;
-	}
+    /**
+     * Constructs a variable map for script execution from the workflow context
+     * @param node The script node
+     * @param context The workflow context
+     * @return Map of variables for script execution
+     */
+    private Map<String, Object> constructScriptVariableMap(Node node, WorkflowContext context) {
+        Map<String, Object> map = Maps.newHashMap();
+        List<Node.InputParam> inputParams = node.getConfig().getInputParams();
+        if (CollectionUtils.isEmpty(inputParams)) {
+            return map;
+        }
+        inputParams.forEach(scriptParam -> {
+            String valueFrom = scriptParam.getValueFrom();
+            if (valueFrom.equals(ValueFromEnum.refer.name())) {
+                Object value = VariableUtils.getValueFromContext(scriptParam, context);
+                map.put(scriptParam.getKey(), value);
+            }
+            else {
+                Object value = VariableUtils.convertValueByType(scriptParam.getKey(), scriptParam.getType(),
+                        scriptParam.getValue());
+                if (value == null) {
+                    return;
+                }
+                map.put(scriptParam.getKey(), value);
+            }
+        });
+        return map;
+    }
 
-	/**
-	 * Supported script types for execution
-	 */
-	public enum ScriptType {
+    /**
+     * Supported script types for execution
+     */
+    public enum ScriptType {
 
-		python, javascript
+        python, javascript, java,
+        ;
 
-	}
+        public static ScriptType fromString(String value) {
+            for (ScriptType type : ScriptType.values()) {
+                if (type.name().equalsIgnoreCase(value)) {
+                    return type;
+                }
+            }
+            return null;
+        }
 
-	/**
-	 * Configuration parameters for script node
-	 */
-	@Data
-	public static class NodeParam {
+    }
 
-		@JsonProperty("type")
-		private String type;
+    /**
+     * Configuration parameters for script node
+     */
+    @Data
+    public static class NodeParam {
 
-		@JsonProperty("script_type")
-		private String scriptType;
+        @JsonProperty("type")
+        private String type;
 
-		@JsonProperty("script_content")
-		private String scriptContent;
+        @JsonProperty("script_type")
+        private String scriptType;
 
-		@JsonProperty("script_params")
-		private List<Node.InputParam> scriptParams;
+        @JsonProperty("script_content")
+        private String scriptContent;
 
-	}
+        @JsonProperty("script_params")
+        private List<Node.InputParam> scriptParams;
 
-	/**
-	 * Validates the script node parameters
-	 * @param graph The workflow graph
-	 * @param node The script node to validate
-	 * @return CheckNodeParamResult containing validation results
-	 */
-	@Override
-	public CheckNodeParamResult checkNodeParam(DirectedAcyclicGraph<String, Edge> graph, Node node) {
-		CheckNodeParamResult result = super.checkNodeParam(graph, node);
-		CheckNodeParamResult inputParamsResult = checkInputParams(node.getConfig().getInputParams());
-		if (!inputParamsResult.isSuccess()) {
-			result.setSuccess(false);
-			result.getErrorInfos().addAll(inputParamsResult.getErrorInfos());
-		}
-		NodeParam nodeParam = JsonUtils.fromMap(node.getConfig().getNodeParam(), NodeParam.class);
-		String scriptContent = nodeParam.getScriptContent();
-		if (StringUtils.isBlank(scriptContent)) {
-			result.setSuccess(false);
-			result.getErrorInfos().add("[Script] is empty");
-		}
-		return result;
-	}
+    }
 
-	/**
-	 * Response model for script execution results
-	 */
-	@Data
-	@Accessors(chain = true)
-	public static class ScriptExecutionResponse {
+    /**
+     * Validates the script node parameters
+     * @param graph The workflow graph
+     * @param node The script node to validate
+     * @return CheckNodeParamResult containing validation results
+     */
+    @Override
+    public CheckNodeParamResult checkNodeParam(DirectedAcyclicGraph<String, Edge> graph, Node node) {
+        CheckNodeParamResult result = super.checkNodeParam(graph, node);
+        CheckNodeParamResult inputParamsResult = checkInputParams(node.getConfig().getInputParams());
+        if (!inputParamsResult.isSuccess()) {
+            result.setSuccess(false);
+            result.getErrorInfos().addAll(inputParamsResult.getErrorInfos());
+        }
+        NodeParam nodeParam = JsonUtils.fromMap(node.getConfig().getNodeParam(), NodeParam.class);
+        String scriptContent = nodeParam.getScriptContent();
+        if (StringUtils.isBlank(scriptContent)) {
+            result.setSuccess(false);
+            result.getErrorInfos().add("[Script] is empty");
+        }
+        return result;
+    }
 
-		@JsonProperty("data")
-		private Object data;
+    /**
+     * Response model for script execution results
+     */
+    @Data
+    @Accessors(chain = true)
+    public static class ScriptExecutionResponse {
 
-		@JsonProperty("success")
-		private Boolean success;
+        @JsonProperty("data")
+        private Object data;
 
-		@JsonProperty("message")
-		private String message;
+        @JsonProperty("success")
+        private Boolean success;
 
-		@JsonProperty("code")
-		private String code;
+        @JsonProperty("message")
+        private String message;
 
-	}
+        @JsonProperty("code")
+        private String code;
+
+    }
 
 }

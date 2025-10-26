@@ -42,7 +42,7 @@ public class JacksonConfig {
 	public ObjectMapper objectMapper() {
 		return Jackson2ObjectMapperBuilder.json()
 			.serializationInclusion(JsonInclude.Include.NON_NULL)
-//			.propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+			/*  .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)*/
 			.featuresToDisable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
 			.featuresToEnable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
 
