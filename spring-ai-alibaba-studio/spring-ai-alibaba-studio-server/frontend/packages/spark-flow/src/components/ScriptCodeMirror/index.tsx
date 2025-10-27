@@ -9,6 +9,7 @@ import {
 } from '@codemirror/autocomplete';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
+import { java } from '@codemirror/lang-java';
 import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { vscodeDark, vscodeLight } from '@uiw/codemirror-theme-vscode';
@@ -30,37 +31,38 @@ const generateTypeDefinitions = (
   inputParams: INodeDataInputParamItem[],
   language: 'java',
 ) => {
-  if (language === 'javascript') {
-    // generate input parameter type
-    const inputTypeDef = inputParams
-      .map((param) => `${param.key}: ${param.type}`)
-      .join(',\n  ');
-
-    return `type InputParams = {
-  ${inputTypeDef}
-};
-
-function process(params: InputParams): void {
-  const input = params;
-
-  // Write your code here
-  return output;
-}`;
-  } else if (language === 'python') {
-    const inputTypeDef = inputParams
-      .map((param) => `${param.key}: ${param.type}`)
-      .join('\n  ');
-    return `from typing import TypedDict, Dict, Any
-
-class InputParams(TypedDict):
-  ${inputTypeDef}
-
-def process(params: InputParams):
-    input = params
-
-    # Write your code here
-    return output`;
-  } else {
+//   if (language === 'javascript') {
+//     // generate input parameter type
+//     const inputTypeDef = inputParams
+//       .map((param) => `${param.key}: ${param.type}`)
+//       .join(',\n  ');
+//
+//     return `type InputParams = {
+//   ${inputTypeDef}
+// };
+//
+// function process(params: InputParams): void {
+//   const input = params;
+//
+//   // Write your code here
+//   return output;
+// }`;
+//   } else if (language === 'python') {
+//     const inputTypeDef = inputParams
+//       .map((param) => `${param.key}: ${param.type}`)
+//       .join('\n  ');
+//     return `from typing import TypedDict, Dict, Any
+//
+// class InputParams(TypedDict):
+//   ${inputTypeDef}
+//
+// def process(params: InputParams):
+//     input = params
+//
+//     # Write your code here
+//     return output`;
+//   }
+  if (language === 'java') {
     const inputTypeDef = inputParams
       .map((param) => `${param.key}: ${param.type}`)
       .join('\n  ');
@@ -73,6 +75,7 @@ public class Main {
 }
 `;
   }
+  return ''; // 添加默认返回值
 };
 
 const createCompletionSource = (inputParams: INodeDataInputParamItem[]) => {
@@ -129,10 +132,14 @@ export default memo(function ScriptCodeMirror(props: IScriptCodeMirrorProps) {
     ];
 
     switch (language) {
-      case 'javascript':
-        return [...baseExtensions, javascript({ typescript: true })];
-      case 'python':
-        return [...baseExtensions, python()];
+      // case 'javascript':
+      //   return [...baseExtensions, javascript({ typescript: true })];
+      // case 'python':
+      //   return [...baseExtensions, python()];
+      case 'java':
+        return [...baseExtensions, java()];
+      default:
+        return [...baseExtensions];
     }
   }, [language, inputParams, outputParams, typeDefinitions, props.onChange]);
 
